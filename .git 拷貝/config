@@ -1,0 +1,33 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+	ignorecase = true
+	precomposeunicode = true
+[submodule]
+	active = .
+[remote "origin"]
+	url = https://github.com/akivn/The-Origin-Railway-History-Tree.git
+	fetch = +refs/heads/*:refs/remotes/origin/*
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+[remote "upstream"]
+	url = https://github.com/Acamaeda/The-Modding-Tree.git
+	fetch = +refs/heads/*:refs/remotes/upstream/*
+[branch "Beta-2"]
+	remote = origin
+	merge = refs/heads/Beta-2
+[branch "Beta-3"]
+	remote = origin
+	merge = refs/heads/Beta-3
+[branch "Rewritten-Beta-1"]
+	remote = origin
+	merge = refs/heads/Rewritten-Beta-1
+[branch "Rewritten-Beta-3"]
+	remote = origin
+	merge = refs/heads/Rewritten-Beta-3
+[branch "Rewritten-Beta-5"]
+	remote = origin
+	merge = refs/heads/Rewritten-Beta-5

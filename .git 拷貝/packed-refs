@@ -1,0 +1,13 @@
+# pack-refs with: peeled fully-peeled sorted 
+8dfb33455b00571411723672065257b23c5608e4 refs/remotes/origin/2.1
+ddafd175004e614a96cd696e7ff84be730a27768 refs/remotes/origin/2.3-dev
+6bcf352fe1d90e26815b8545ebdc1e6472abcab6 refs/remotes/origin/2.3.6-dev
+5a4a4da5adf42a5f1f40689fd84e2f9d7baa5d94 refs/remotes/origin/2.4-dev
+3dc9315a3aca3e94065b2ee141f79150ad8c8bef refs/remotes/origin/2.5-dev
+d28e64fd66501f130391fd27a00b4d01cee9080d refs/remotes/origin/3.0-dev
+e9adac94c20330da19181087fcb9dfcf6cfd81ad refs/remotes/origin/DTD-2.0-test
+1df3fac4b6f0391d1b04683541f78097c5a9b668 refs/remotes/origin/devception
+66d7d5b4fb1fbd3f87fb8fc9c90a6c772103c8a2 refs/remotes/origin/master
+8a7ce88b4dc6c76c4c05dbfea4e3afd6151eccee refs/remotes/origin/master-cf-autofix
+5c6a5880e3efe983189d81e8e78e4b1dcb036b7f refs/remotes/origin/v1.0
+42aa047fdaa11440555fc80625b9385990c49a07 refs/remotes/origin/v1.2-Beta
