@@ -13,8 +13,8 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1",
-	name: "Rewritten-Beta-5 - Year 4 Update",
+	num: "0.1a",
+	name: "",
 }
 
 let changelog = `<h1>Changelog:</h1><br>
@@ -50,6 +50,7 @@ function getPointGen() {
 	if (getBuyableAmount('a', 11).gte(1)) gain = gain.times(buyableEffect('a', 11))
 	gain = gain.times(tmp.ac.effect)
 	gain = gain.times(tmp.b.effect)
+	gain = gain.times(tmp.c.effect)
 	return gain
 }
 

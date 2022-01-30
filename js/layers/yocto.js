@@ -2,7 +2,7 @@ addLayer("a", {
     startData() { return {                 
         unlocked: true,                     
         points: new Decimal(0),
-        auto1: false              
+        auto1: true              
     }},
     name: "Yocto Factory",
     symbol: "y",
@@ -30,7 +30,9 @@ addLayer("a", {
         let mult = new Decimal(1)  
         if (hasUpgrade('a', 13)) mult = mult.times(upgradeEffect('a', 13))
         if (hasUpgrade('a', 21)) mult = mult.times(upgradeEffect('a', 21))  
-        if (hasUpgrade('b', 14)) mult = mult.times(upgradeEffect('b', 14))                    
+        if (hasUpgrade('b', 14)) mult = mult.times(upgradeEffect('b', 14)) 
+        if (hasUpgrade('c', 15)) mult = mult.times(upgradeEffect('c', 15))  
+        mult = mult.times(tmp.c.effect)                 
                       
         return mult        
     },
@@ -68,6 +70,7 @@ addLayer("a", {
             effect() {
                 let power = new Decimal(player.points.add(5).log(5))
                 if (hasUpgrade('a', 43)) power = power.times(upgradeEffect('a', 43))
+                if (hasChallenge('b', 21)) power = power.pow(6)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -81,6 +84,7 @@ addLayer("a", {
             cost: new Decimal(25),
             effect() {
                 let power = new Decimal(player.a.points.add(4).log(4))
+                if (hasChallenge('b', 21)) power = power.pow(6)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -94,6 +98,7 @@ addLayer("a", {
             cost: new Decimal(60),
             effect() {
                 let power = new Decimal(player.a.points.add(6).log(6))
+                if (hasChallenge('b', 21)) power = power.pow(6)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -107,6 +112,7 @@ addLayer("a", {
             cost: new Decimal(200),
             effect() {
                 let power = new Decimal(player.points.add(3).log(3))
+                if (hasUpgrade('c', 13)) power = power.times(1e30)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -239,6 +245,7 @@ addLayer("a", {
                 if (hasUpgrade('b', 23)) power = power.pow(1.3)
                 if (hasUpgrade('a', 41)) power = power.mul(upgradeEffect('a', 41))
                 if (hasChallenge('b', 11)) power = power.pow(1.1)
+                if (hasUpgrade('c', 14)) power = power.pow(1.2)
                 if (inChallenge('b', 11)) power = power.pow(0)
                 return power
             },
@@ -267,6 +274,7 @@ addLayer("a", {
                 let power = new Decimal(1).mul(x.pow(new Decimal(2).pow(1)).add(1))
                 if (getBuyableAmount('a', 21).gte(1)) power = power.mul(buyableEffect('a', 21))
                 if (hasChallenge('b', 11)) power = power.pow(1.1)
+                if (hasUpgrade('c', 14)) power = power.pow(1.2)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
@@ -292,13 +300,15 @@ addLayer("a", {
             },
             effect(x){
                 let power = new Decimal(1).mul(x.pow(new Decimal(2).pow(2.5)).add(1))
+                if (getBuyableAmount('a', 22).gte(1)) power = power.mul(buyableEffect('a', 22))
                 if (hasChallenge('b', 11)) power = power.pow(1.1)
+                if (hasUpgrade('c', 14)) power = power.pow(1.2)
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
                 return "Cost: " + format(data.cost) + " yoctopoints\n\
                 Amount: " + player[this.layer].buyables[this.id] + "\n\
-                Multiplies yM1 boost by " + format(buyableEffect(this.layer, this.id))+"x"
+                Multiplies yM2 boost by " + format(buyableEffect(this.layer, this.id))+"x"
             },
             canAfford() { return player[this.layer].points.gte(this.cost()) },
             buy() {
@@ -307,6 +317,31 @@ addLayer("a", {
             },
             unlocked() {
                 return hasUpgrade('b', 22)
+            }
+        },
+        22: {
+            title: "Yocto-machine 4",
+            cost(x) { 
+                let cost = new Decimal('1e600').times(new Decimal(1e10).pow(x))
+                cost = softcap(cost, new Decimal('1e1500'), new Decimal(1).add(cost.log('1e1000').minus(1.5)))
+                return cost
+            },
+            effect(x){
+                let power = new Decimal(1).mul(x.pow(new Decimal(2).pow(2.5)).add(1))
+                return power
+            },
+            display() { let data = tmp[this.layer].buyables[this.id]
+                return "Cost: " + format(data.cost) + " attopoints\n\
+                Amount: " + player[this.layer].buyables[this.id] + "\n\
+                Multiplies yM3 boost by " + format(buyableEffect(this.layer, this.id))+"x"
+            },
+            canAfford() { return player[this.layer].points.gte(this.cost()) },
+            buy() {
+                player[this.layer].points = player[this.layer].points.sub(this.cost())
+                setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
+            },
+            unlocked() {
+                return hasUpgrade('b', 32)
             }
         },
 
@@ -332,7 +367,9 @@ addLayer("a", {
     doReset(resettingLayer) {
         let keep = []
         if (hasMilestone('b', 1)) keep.push("buyables")
+        if (hasMilestone('c', 1)) keep.push("buyables")
         if (hasMilestone('b', 2)) keep.push("upgrades")
+        if (hasMilestone('c', 0)) keep.push("upgrades")
         if (layers[resettingLayer].row > this.row) layerDataReset("a", keep)
         if (hasMilestone("b", 0)) player.a.upgrades.push(11)
         if (hasMilestone('b', 1)) player.a.upgrades.push(24)
@@ -340,12 +377,15 @@ addLayer("a", {
     automate() {
         if (hasMilestone('b', 3) && player[this.layer].auto1 ) {
             buyBuyable('a', 11)
-            if (hasUpgrade('a', 31)) {
-                buyBuyable('a', 12)
-            }
-            if (hasUpgrade('b', 22)) {
-                buyBuyable('a', 21)
-            }
+        }
+        if (hasUpgrade('a', 31) && player[this.layer].auto1) {
+            buyBuyable('a', 12)
+        }
+        if (hasUpgrade('b', 22) && player[this.layer].auto1) {
+            buyBuyable('a', 21)
+        }
+        if (hasUpgrade('b', 32) && player[this.layer].auto1) {
+            buyBuyable('a', 22)
         }
     }
         

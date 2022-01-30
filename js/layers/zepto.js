@@ -38,6 +38,7 @@ addLayer("b", {
         let effect = new Decimal(1).times(new Decimal(3).pow(player.b.points))
         if (hasUpgrade('b', 13)) effect = new Decimal(1).times(new Decimal(10).pow(player.b.points))
         if (hasUpgrade('b', 13) && hasUpgrade('a', 44)) effect = new Decimal(1).times(new Decimal(13.1128).pow(player.b.points))
+        if (hasUpgrade('b', 13) && hasUpgrade('b', 25)) effect = new Decimal(1).times(new Decimal(25).pow(player.b.points))
         if (inChallenge('b', 12) && hasUpgrade('a', 44)) effect = new Decimal(1).times(new Decimal(3.1128).pow(player.b.points))
         if (inChallenge('b', 12) && !hasUpgrade('a', 44)) effect = new Decimal(1).times(new Decimal(1).pow(player.b.points))
         if (hasUpgrade('b', 11)) effect = effect.times(tmp.ac.effect)
@@ -50,7 +51,7 @@ addLayer("b", {
     },
 
 
-    layerShown() { return player.a.best.gte(50000) || player.b.best.gte(1) }, 
+    layerShown() { return player.a.best.gte(50000) || player.b.best.gte(1) || player.c.best.gte(1) }, 
     passiveGeneration() {
     },
     upgrades: {
@@ -105,7 +106,7 @@ addLayer("b", {
                 return (hasUpgrade('b', 14))
             },
         },
-        22: {
+        21: {
             title: "Cubed",
             description: "Unlock yocto-machine 3.",
             cost: new Decimal(20),
@@ -113,7 +114,7 @@ addLayer("b", {
                 return (hasUpgrade('a', 34))
             },
         },
-        23: {
+        22: {
             title: "Tri-squared!",
             description: "Boost to yM1 by yocto-upgrade 34 is now ^1.69. (1.3^2)",
             cost: new Decimal(25),
@@ -121,7 +122,7 @@ addLayer("b", {
                 return (hasUpgrade('a', 34))
             },
         },
-        24: {
+        23: {
             title: "Challenge to yoctos!",
             description: "Unlock Challenges.",
             cost: new Decimal(30),
@@ -129,12 +130,49 @@ addLayer("b", {
                 return (hasUpgrade('a', 34))
             },
         },
-        25: {
+        24: {
             title: "50 zepto-subscribers!",
             description: "Multiply all Dynamic zepto-upgrades effect by 50, and achievement power effect by ^5.",
             cost: new Decimal(50),
             unlocked(){
                 return (hasUpgrade('b', 24))
+            },
+        },
+        25: {
+            title: "Zepto-crystals",
+            description: "The zeptopoints effect base is much stronger. (13.11 -> 25)",
+            cost: new Decimal(150),
+            unlocked(){
+                return (hasUpgrade('b', 24))
+            },
+        },
+        31: {
+            title: "Zepto-Punch",
+            description: "Atto-upgrade 11 is stronger based on your zeptopoints.",
+            cost: new Decimal(167),
+            effect() {
+                let power = new Decimal(1).times(new Decimal(1.02).pow(player.b.points))
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            unlocked(){
+                return (hasUpgrade('c', 14))
+            },
+        },
+        32: {
+            title: "2 new machines!",
+            description: "Unlock yocto-machine 4 and atto-machine 1.",
+            cost: new Decimal(180),
+            unlocked(){
+                return (hasUpgrade('c', 14))
+            },
+        },
+        33: {
+            title: "Atto-loyalty",
+            description: "Atto-machine 1 is powered to ^2.",
+            cost: new Decimal(200),
+            unlocked(){
+                return (hasUpgrade('c', 14))
             },
         },
 
@@ -164,6 +202,18 @@ addLayer("b", {
             },
             unlocked() {
                 return hasUpgrade('b', 24)
+            }
+        },
+        21: {
+            name: "Atto-strike",
+            challengeDescription: "Attopoints do nothing.",
+            goalDescription: "5e152 points",
+            rewardDescription: "Zepto-upgrade 13, 14 & 21 is powered to ^6.",
+            canComplete: function() {
+            return player.points.gte(1e252)
+            },
+            unlocked() {
+                return hasUpgrade('c', 12)
             }
         },
 
@@ -228,6 +278,16 @@ addLayer("b", {
                 return hasUpgrade('b', 24)
             }
         },
+    },
+    canBuyMax() {
+        return hasMilestone('c', 1)
+    },
+    doReset(resettingLayer) {
+        let keep = []
+        if (hasMilestone('c', 2)) keep.push("upgrades")
+        if (hasMilestone('c', 3)) keep.push("challenges")
+        if (hasMilestone('c', 4)) keep.push("milestones")
+        if (layers[resettingLayer].row > this.row) layerDataReset("b", keep)
     },
 
 })

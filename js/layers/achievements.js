@@ -236,8 +236,8 @@ addLayer("ac", {
         },
         155: {
             name: "z5",
-            tooltip: "Gain 1e8 yoctopoints.",
-            done() { return player.a.points.gte(1e8)
+            tooltip: "Gain 1e8 zeptopoints.",
+            done() { return player.b.points.gte(1e8)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
@@ -271,7 +271,7 @@ addLayer("ac", {
             }
         },
         164: {
-            name: "z6",
+            name: "z9",
             tooltip: "Finish zepto-challenge 4.",
             done() { return hasChallenge('b', 22)
             },
@@ -280,9 +280,54 @@ addLayer("ac", {
             }
         },
         165: {
-            name: "z6",
+            name: "z10",
             tooltip: "Finish zepto-challenge 5.",
             done() { return hasChallenge('b', 31)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        171: {
+            name: "a1",
+            tooltip: "Get 1 attopoint.",
+            done() { return player.c.points.gte(1)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        172: {
+            name: "a2",
+            tooltip: "Get 10 attopoints.",
+            done() { return player.c.points.gte(10)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        173: {
+            name: "a3",
+            tooltip: "Get 10,000 attopoints.",
+            done() { return player.c.points.gte(10000)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        174: {
+            name: "a4",
+            tooltip: "Get 100,000,000 attopoints.",
+            done() { return player.c.points.gte(1e8)
+            },
+            onComplete() {
+                player[this.layer].points = player[this.layer].points.add(1)
+            }
+        },
+        175: {
+            name: "a5",
+            tooltip: "Get 1e16 attopoints.",
+            done() { return player.c.points.gte(1e16)
             },
             onComplete() {
                 player[this.layer].points = player[this.layer].points.add(1)
