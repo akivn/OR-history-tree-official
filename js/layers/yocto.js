@@ -9,7 +9,7 @@ addLayer("a", {
     color: "#404040",                      
     resource: "yoctopoints",           
     row: 0,        
-    branches: ["b"],                       
+    branches: ["b", "sy"],                       
 
     baseResource: "points",                
     baseAmount() { return player.points },  
@@ -32,7 +32,9 @@ addLayer("a", {
         if (hasUpgrade('a', 21)) mult = mult.times(upgradeEffect('a', 21))  
         if (hasUpgrade('b', 14)) mult = mult.times(upgradeEffect('b', 14)) 
         if (hasUpgrade('c', 15)) mult = mult.times(upgradeEffect('c', 15))  
-        mult = mult.times(tmp.c.effect)                 
+        mult = mult.times(tmp.c.effect)
+        if (inChallenge('b', 22)) mult = mult.pow(0.5)       
+                
                       
         return mult        
     },
@@ -156,6 +158,7 @@ addLayer("a", {
             effect() {
                 let power = new Decimal(player.a.points).add(1.3).log(1.3)
                 if (hasUpgrade('a', 43)) power = power.times(upgradeEffect('a', 43))
+                if (hasUpgrade('a', 45)) power = power.times(upgradeEffect('a', 45))
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -166,7 +169,7 @@ addLayer("a", {
         34: {
             title: "Ultratri I",
             description: "Boost yocto-machine 1 by ^1.3, and zepto-upgrade 12 by ^3. Also unlocks 3 new zepto-upgrades.",
-            cost: new Decimal(1e22),
+            cost: new Decimal(1e30),
             unlocked(){
                 return (hasUpgrade('b', 15))
             },
@@ -225,6 +228,136 @@ addLayer("a", {
                 return (hasChallenge('b', 11))
             },
         },
+        15: {
+            title: "Communicate!",
+            description: "SY effect is boosted to the power to ^1.6.",
+            cost: new Decimal('1e2800'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        25: {
+            title: "Cross-branch help",
+            description: "SY now boost attopoints gain, but in a reduced rate.",
+            cost: new Decimal('1e4000'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            effect() {
+                let power = tmp.sy.effect.pow(0.034)
+                power = softcap(power, new Decimal(100), 0.4)
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        35: {
+            title: "Sonic-boost!",
+            description: "Zeptopoints effect is powered based on your points.",
+            cost: new Decimal('1e5000'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            effect() {
+                let power = player.a.points.pow(0.01).log(1e40)
+                power = softcap(power, new Decimal(1.6), 0.7)
+                return power
+            },
+            effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) },
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        45: {
+            title: "ATTO-ON",
+            description: "Yocto-upgrade 33 is boosted based on your attopoints.",
+            cost: new Decimal('1e6400'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            effect() {
+                let power = player.c.points
+                power = softcap(power, new Decimal(1e100), 0.5)
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        51: {
+            title: "Triplet",
+            description: "Unlock atto-machine 3.",
+            cost: new Decimal('1e7000'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        52: {
+            title: "Achievement optimisation",
+            description: "Achievement power is powered again to ^100.",
+            cost: new Decimal('1e8400'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        53: {
+            title: "ATTO-UPGRADE",
+            description: "Attopoints boost is boosted by yM1 effect.",
+            cost: new Decimal('1e9900'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            effect() {
+                let power = buyableEffect('a', 11).pow(0.01).log(1e40).add(1)
+                power = softcap(power, new Decimal(1.6), 0.9)
+                return power
+            },
+            effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) },
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        54: {
+            title: "YOCTO-BOOST 2!",
+            description: "Yoctopoints boost points, but this time, in exponent!",
+            cost: new Decimal('e14200'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            effect() {
+                let power = player.a.points.log(10).log(10).log(1000).add(1)
+                power = softcap(power, new Decimal(1.6), 0.9)
+                return power
+            },
+            effectDisplay() { return "^"+format(upgradeEffect(this.layer, this.id)) },
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        55: {
+            title: "Unleash the power!",
+            description: "Unlock 1 new zepto-challenge.",
+            cost: new Decimal('3.16e16516'),
+            currencyLayer: "a",
+			currencyInternalName: "points",
+			currencyDisplayName: "yoctopoints",
+            unlocked(){
+                return (hasMilestone('sy', 1))
+            },
+        },
+        
 
 
 
@@ -239,10 +372,11 @@ addLayer("a", {
             },
             effect(x){
                 let power = new Decimal(1).mul(x.pow(new Decimal(2).pow(0.5)).add(1))
+                power = power.times(tmp.sy.effect)
                 if (getBuyableAmount('a', 12).gte(1)) power = power.mul(buyableEffect('a', 12))
                 if (hasUpgrade('a', 33)) power = power.mul(upgradeEffect('a', 33))
                 if (hasUpgrade('a', 34)) power = power.pow(1.3)
-                if (hasUpgrade('b', 23)) power = power.pow(1.3)
+                if (hasUpgrade('b', 22)) power = power.pow(1.3)
                 if (hasUpgrade('a', 41)) power = power.mul(upgradeEffect('a', 41))
                 if (hasChallenge('b', 11)) power = power.pow(1.1)
                 if (hasUpgrade('c', 14)) power = power.pow(1.2)
@@ -275,6 +409,8 @@ addLayer("a", {
                 if (getBuyableAmount('a', 21).gte(1)) power = power.mul(buyableEffect('a', 21))
                 if (hasChallenge('b', 11)) power = power.pow(1.1)
                 if (hasUpgrade('c', 14)) power = power.pow(1.2)
+                power = power.times(tmp.sy.effect)
+
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
@@ -303,6 +439,8 @@ addLayer("a", {
                 if (getBuyableAmount('a', 22).gte(1)) power = power.mul(buyableEffect('a', 22))
                 if (hasChallenge('b', 11)) power = power.pow(1.1)
                 if (hasUpgrade('c', 14)) power = power.pow(1.2)
+                power = power.times(tmp.sy.effect)
+
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
@@ -316,7 +454,7 @@ addLayer("a", {
                 setBuyableAmount(this.layer, this.id, getBuyableAmount(this.layer, this.id).add(1))
             },
             unlocked() {
-                return hasUpgrade('b', 22)
+                return hasUpgrade('b', 21)
             }
         },
         22: {
@@ -328,6 +466,8 @@ addLayer("a", {
             },
             effect(x){
                 let power = new Decimal(1).mul(x.pow(new Decimal(2).pow(2.5)).add(1))
+                power = power.times(tmp.sy.effect)
+
                 return power
             },
             display() { let data = tmp[this.layer].buyables[this.id]
@@ -366,6 +506,7 @@ addLayer("a", {
     },
     doReset(resettingLayer) {
         let keep = []
+        if (!inChallenge('b', 22) && hasMilestone('c', 1)) keep.push("points")
         if (hasMilestone('b', 1)) keep.push("buyables")
         if (hasMilestone('c', 1)) keep.push("buyables")
         if (hasMilestone('b', 2)) keep.push("upgrades")
@@ -378,13 +519,13 @@ addLayer("a", {
         if (hasMilestone('b', 3) && player[this.layer].auto1 ) {
             buyBuyable('a', 11)
         }
-        if (hasUpgrade('a', 31) && player[this.layer].auto1) {
+        if (hasMilestone('b', 3) && hasUpgrade('a', 31) && player[this.layer].auto1) {
             buyBuyable('a', 12)
         }
-        if (hasUpgrade('b', 22) && player[this.layer].auto1) {
+        if (hasMilestone('b', 3) && hasUpgrade('b', 21) && player[this.layer].auto1) {
             buyBuyable('a', 21)
         }
-        if (hasUpgrade('b', 32) && player[this.layer].auto1) {
+        if (hasMilestone('b', 3) && hasUpgrade('b', 32) && player[this.layer].auto1) {
             buyBuyable('a', 22)
         }
     }

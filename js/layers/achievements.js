@@ -338,7 +338,8 @@ addLayer("ac", {
     effect() {
         let effect = new Decimal(1.1).pow(player.ac.points)
         if(hasUpgrade('a', 23)) effect = effect.pow(2)
-        if (hasUpgrade('b', 25)) effect = effect.pow(5)
+        if (hasUpgrade('b', 24)) effect = effect.pow(5)
+        if (hasUpgrade('a', 52)) effect = effect.pow(100)
         return effect
     },
     effectDescription(){

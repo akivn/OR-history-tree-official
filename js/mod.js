@@ -3,7 +3,7 @@ let modInfo = {
 	id: "akivn",
 	author: "akivn",
 	pointsName: "points",
-	modFiles: ["layers/yocto.js", "layers/zepto.js", "layers/atto.js", "layers/achievements.js", "func.js", "tree.js"],
+	modFiles: ["layers/yocto.js", "layers/zepto.js", "layers/superyocto.js", "layers/atto.js", "layers/femto.js", "layers/achievements.js", "func.js", "tree.js"],
 
 	discordName: "Origin Franchise Discord",
 	discordLink: "https://discord.gg/bJ6WthRw5M",
@@ -13,7 +13,7 @@ let modInfo = {
 
 // Set your version in num and name
 let VERSION = {
-	num: "0.1a",
+	num: "0.2",
 	name: "",
 }
 
@@ -21,7 +21,7 @@ let changelog = `<h1>Changelog:</h1><br>
 	`
 		
 
-let winText = `Congratulations! You have reached the point that every factories in the universe can't afford, becoming a black hole, eating everything, caused a big crunch and beaten this game, but for now...`
+let winText = `Congratulations! You have reached the point that every factories in the universe and collapsing into a black hole, eating everything, caused a big crunch and beaten this game, but for now...`
 
 // If you add new functions anywhere inside of a layer, and those functions have an effect when called, add them here.
 // (The ones here are examples, all official functions are already taken care of)
@@ -47,10 +47,13 @@ function getPointGen() {
 	if (hasUpgrade('a', 12)) gain = gain.times(upgradeEffect('a', 12))
 	if (hasUpgrade('a', 14)) gain = gain.times(upgradeEffect('a', 14))
 	if (hasUpgrade('a', 22)) gain = gain.times(upgradeEffect('a', 22))
+	if (hasUpgrade('b', 34)) gain = gain.times(upgradeEffect('b', 34))
 	if (getBuyableAmount('a', 11).gte(1)) gain = gain.times(buyableEffect('a', 11))
 	gain = gain.times(tmp.ac.effect)
 	gain = gain.times(tmp.b.effect)
 	gain = gain.times(tmp.c.effect)
+	if (inChallenge('b', 22)) gain = gain.pow(0.5)
+	if (hasUpgrade('a', 54)) gain = gain.pow(upgradeEffect('a', 54))
 	return gain
 }
 
@@ -61,12 +64,12 @@ function addedPlayerData() { return {
 // Display extra things at the top of the page
 var displayThings = [
 	"<br>",
-	function() { return `<h3>Current Endgame: </h3> ${GetEffectText("h3", 1, tmp.c.color)} Attopoint` },
+	function() { return `<h3>Current Endgame: </h3> ${GetEffectText("h3", 1, tmp.d.color)} femtopoint (1e20,000 points)` },
 ]
 
 // Determines when the game "ends"
 function isEndgame() {
-	return player.c.points.gte(1)
+	return player.d.points.gte(1)
 }
 
 

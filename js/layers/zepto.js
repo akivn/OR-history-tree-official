@@ -1,7 +1,8 @@
 addLayer("b", {
     startData() { return {                 
         unlocked: false,                     
-        points: new Decimal(0),            
+        points: new Decimal(0),
+        auto2: true            
     }},
     name: "Zepto Factory",
     symbol: "z",
@@ -24,10 +25,12 @@ addLayer("b", {
             description: "2: reset for Zeptopoints", 
             onPress() { if (player.b.unlocked) doReset("b") }, 
         }
-    ],                     
+    ],         
 
     gainMult() {
-        let mult = new Decimal(1)                     
+        let mult = new Decimal(1)  
+        if (inChallenge('b', 22)) mult = mult.pow(0.5)
+                   
                       
         return mult        
     },
@@ -43,6 +46,9 @@ addLayer("b", {
         if (inChallenge('b', 12) && !hasUpgrade('a', 44)) effect = new Decimal(1).times(new Decimal(1).pow(player.b.points))
         if (hasUpgrade('b', 11)) effect = effect.times(tmp.ac.effect)
         if (hasUpgrade('b', 12)) effect = effect.times(upgradeEffect('b', 12))
+        if (hasUpgrade('a', 35)) effect = effect.pow(upgradeEffect('a', 35))
+        if (inChallenge('b', 31)) effect = new Decimal(1)
+        effect = softcap(effect, new Decimal('1e3500'), new Decimal(0.5).div(player.b.points.add(1).div(1000)))
         
         return effect
     },
@@ -51,8 +57,11 @@ addLayer("b", {
     },
 
 
-    layerShown() { return player.a.best.gte(50000) || player.b.best.gte(1) || player.c.best.gte(1) }, 
+    layerShown() { return player.a.best.gte(50000) || player.b.best.gte(1) || player.c.best.gte(1) || player.d.best.gte(1)}, 
     passiveGeneration() {
+    },
+    autoPrestige() {
+        return player[this.layer].auto2 && hasMilestone('c', 5)
     },
     upgrades: {
         11: {
@@ -68,7 +77,7 @@ addLayer("b", {
                 let power = new Decimal(player.a.points.add(10).log(10))
                 if (hasUpgrade('a', 32)) power = power.pow(2)
                 if (hasUpgrade('a', 34)) power = power.pow(3)
-                if (hasUpgrade('b', 25)) power = power.times(50)
+                if (hasUpgrade('b', 24)) power = power.times(50)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -90,7 +99,7 @@ addLayer("b", {
             cost: new Decimal(6),
             effect() {
                 let power = new Decimal(1).times(new Decimal(3).pow(player.b.points))
-                if (hasUpgrade('b', 25)) power = power.times(50)
+                if (hasUpgrade('b', 24)) power = power.times(50)
                 return power
             },
             effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
@@ -135,7 +144,7 @@ addLayer("b", {
             description: "Multiply all Dynamic zepto-upgrades effect by 50, and achievement power effect by ^5.",
             cost: new Decimal(50),
             unlocked(){
-                return (hasUpgrade('b', 24))
+                return (hasUpgrade('b', 23))
             },
         },
         25: {
@@ -143,7 +152,7 @@ addLayer("b", {
             description: "The zeptopoints effect base is much stronger. (13.11 -> 25)",
             cost: new Decimal(150),
             unlocked(){
-                return (hasUpgrade('b', 24))
+                return (hasUpgrade('b', 23))
             },
         },
         31: {
@@ -169,8 +178,31 @@ addLayer("b", {
         },
         33: {
             title: "Atto-loyalty",
-            description: "Atto-machine 1 is powered to ^2.",
+            description: "Atto-machines are powered to ^2.",
             cost: new Decimal(200),
+            unlocked(){
+                return (hasUpgrade('c', 14))
+            },
+        },
+        34: {
+            title: "Lubricator",
+            description: "Every zeptopoints after 200 boost points gain.",
+            cost: new Decimal(235),
+            effect() {
+                let power = new Decimal(1).times(new Decimal(1000).pow(player.b.points.minus(200)))
+                if (!power.gte(1)) power = new Decimal(1)
+                power = softcap(power, new Decimal('1.79e308'), new Decimal(1).div(power.log('1.79e308').pow(0.99)))
+                return power
+            },
+            effectDisplay() { return format(upgradeEffect(this.layer, this.id))+"x" },
+            unlocked(){
+                return (hasUpgrade('c', 14))
+            },
+        },
+        35: {
+            title: "Manager",
+            description: "Unlock 1 new atto-generator and 1 new challenge.",
+            cost: new Decimal(273),
             unlocked(){
                 return (hasUpgrade('c', 14))
             },
@@ -189,7 +221,7 @@ addLayer("b", {
             return player.points.gte(1e48)
             },
             unlocked() {
-                return hasUpgrade('b', 24)
+                return hasUpgrade('b', 23)
             }
         },
         12: {
@@ -201,19 +233,43 @@ addLayer("b", {
             return player.points.gte(5e152)
             },
             unlocked() {
-                return hasUpgrade('b', 24)
+                return hasUpgrade('b', 23)
             }
         },
         21: {
             name: "Atto-strike",
             challengeDescription: "Attopoints do nothing.",
-            goalDescription: "5e152 points",
+            goalDescription: "1e252 points",
             rewardDescription: "Zepto-upgrade 13, 14 & 21 is powered to ^6.",
             canComplete: function() {
             return player.points.gte(1e252)
             },
             unlocked() {
                 return hasUpgrade('c', 12)
+            }
+        },
+        22: {
+            name: "War of layers",
+            challengeDescription: "All point gain is square rooted.",
+            goalDescription: "8.76e543 points",
+            rewardDescription: "Atto-machines effect are powered to ^1.3.",
+            canComplete: function() {
+            return player.points.gte('8.76e543')
+            },
+            unlocked() {
+                return hasUpgrade('b', 35)
+            }
+        },
+        31: {
+            name: "Complete halt",
+            challengeDescription: "All layer effects are disabled.",
+            goalDescription: "1e12121 points",
+            rewardDescription: "UNLOCK FEMTO-FACTORY, and boost all atto-factories by ^1.3.",
+            canComplete: function() {
+            return player.points.gte('e12121')
+            },
+            unlocked() {
+                return hasUpgrade('a', 55)
             }
         },
 
@@ -252,6 +308,12 @@ addLayer("b", {
             done() {return player[this.layer].best.gte(16)},
             effectDescription: "Passively gain 30% of the yoctopoints pending every second.",
         },
+        5: {
+            requirementDescription: "300 zeptopoints",
+            unlocked() {return player.c.unlocked},
+            done() {return player[this.layer].best.gte(300)},
+            effectDescription: "Atto-resets will not reset zeptopoint amount.",
+        },
 
     },
     tabFormat: {
@@ -275,7 +337,7 @@ addLayer("b", {
                 "challenges",
             ],
             unlocked () {
-                return hasUpgrade('b', 24)
+                return hasUpgrade('b', 23)
             }
         },
     },
@@ -287,6 +349,9 @@ addLayer("b", {
         if (hasMilestone('c', 2)) keep.push("upgrades")
         if (hasMilestone('c', 3)) keep.push("challenges")
         if (hasMilestone('c', 4)) keep.push("milestones")
+        if (hasMilestone('b', 5) && !inChallenge('b', 22)) keep.push("points")
+
+
         if (layers[resettingLayer].row > this.row) layerDataReset("b", keep)
     },
 
